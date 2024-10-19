@@ -11,7 +11,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const [password, setPassword] = useState("");
   const [backgroundImg, setBackgroundImg] = useState("");
 
-  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
+  const accessKey = process.env.REACT_APP_UNSPLASH_ACCESS_KEY;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,14 +21,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const fetchRandomBackgroundImg = async () => {
     try {
       const response = await axios.get(
-        "https://source.unsplash.com/photos/random",
+        "https://api.unsplash.com/photos/random",
         {
           headers: {
-            Authorization: `Client-ID ${accessKey}`,
+            Authorization: `Client-ID ${accessKey}}`,
           },
           params: {
-            query: "technology",
+            query: "modern minimalistic technology",
             orientation: "landscape",
+            color: "blue",
           },
         }
       );
@@ -50,34 +51,34 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
   return (
     <div
-      className="form-container"
+      className="form-background"
       style={{
         backgroundImage: `url(${backgroundImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
       }}
     >
-      <h1>Login Page</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-        />
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
-        />
-        <button type="submit">Login</button>
-      </form>
-      <a href="/create-user-account">Create an account</a>
-      <br />
-      <a href="/create-team">Create a team</a>
+      <div className="form-container">
+        <h1>Login Page</h1>
+        <form onSubmit={handleSubmit}>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+          />
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+          />
+          <button type="submit">Login</button>
+        </form>
+        <a href="/create-user-account">Create an account</a>
+        <br />
+        <a href="/create-team">Create a team</a>
+      </div>
     </div>
   );
 };

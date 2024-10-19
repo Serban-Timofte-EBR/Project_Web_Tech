@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./create_team_form.css";
 
 interface CreateTeamFormProps {
   onSubmit: (teamName: string) => void;
