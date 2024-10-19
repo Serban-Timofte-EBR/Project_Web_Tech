@@ -8,7 +8,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div>
-      <RegisterForm onSubmit={handleRegister} />
+      <RegisterForm />
     </div>
   );
 };
