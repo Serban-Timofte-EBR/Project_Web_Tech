@@ -9,17 +9,6 @@ body {
   background: linear-gradient(135deg, #1e2a78, #6a82fb);
 }
 
-.form-background {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .form-container {
   background-color: rgba(255, 255, 255, 0.15);
   padding: 30px;
