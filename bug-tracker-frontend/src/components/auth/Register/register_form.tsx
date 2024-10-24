@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Box, Typography, MenuItem } from "@mui/material";
 import axios from "axios";
-import { fetchTeams } from "../../../redux/teams/teamsSlice";
+import { fetchProjects } from "../../../redux/projects/projectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../redux/store";
 
@@ -12,12 +12,12 @@ const RegisterForm: React.FC = () => {
   const [backgroundImg, setBackgroundImg] = useState("");
 
   const dispatch: AppDispatch = useDispatch();
-  const { teams, loading, error } = useSelector(
-    (state: RootState) => state.teams
+  const { projects, loading, error } = useSelector(
+    (state: RootState) => state.projects
   );
 
   useEffect(() => {
-    dispatch(fetchTeams());
+    dispatch(fetchProjects());
   }, [dispatch]);
 
   const fetchBackgroundImage = async () => {
@@ -41,7 +41,7 @@ const RegisterForm: React.FC = () => {
     fetchBackgroundImage();
     const interval = setInterval(() => {
       fetchBackgroundImage();
-    }, 30000);
+    }, 120000);
     return () => clearInterval(interval);
   }, []);
 
@@ -56,6 +56,7 @@ const RegisterForm: React.FC = () => {
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "100vh",
+        width: "100vw",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -85,9 +86,6 @@ const RegisterForm: React.FC = () => {
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            InputLabelProps={{
-              style: { color: "#000" },
-            }}
             sx={{
               backgroundColor: "rgba(255, 255, 255, 0.2)",
               borderRadius: 1,
@@ -104,7 +102,7 @@ const RegisterForm: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             InputLabelProps={{
-              style: { color: "#000" }, 
+              style: { color: "#000" },
             }}
             sx={{
               backgroundColor: "rgba(255, 255, 255, 0.2)",
@@ -115,13 +113,10 @@ const RegisterForm: React.FC = () => {
           <TextField
             select
             fullWidth
-            label="Team"
+            label="Projects"
             value={team}
             onChange={(e) => setTeam(e.target.value)}
-            helperText="Please select your team"
-            InputLabelProps={{
-              style: { color: "#000" },
-            }}
+            helperText="Please select your project"
             sx={{
               backgroundColor: "rgba(255, 255, 255, 0.2)",
               borderRadius: 1,
@@ -129,13 +124,13 @@ const RegisterForm: React.FC = () => {
             }}
           >
             {loading ? (
-              <MenuItem disabled>Loading teams...</MenuItem>
+              <MenuItem disabled>Loading available projects...</MenuItem>
             ) : error ? (
-              <MenuItem disabled>Error loading teams</MenuItem>
+              <MenuItem disabled>Error loading available projects</MenuItem>
             ) : (
-              teams.map((team: string) => (
-                <MenuItem key={team} value={team}>
-                  {team}
+              projects.map((project: string) => (
+                <MenuItem key={project} value={project}>
+                  {project}
                 </MenuItem>
               ))
             )}
@@ -158,11 +153,6 @@ const RegisterForm: React.FC = () => {
           Already have an account?{" "}
           <a href="/login" style={{ color: "#bbdefb" }}>
             Login here
-          </a>
-        </Typography>
-        <Typography sx={{ color: "#bbdefb" }}>
-          <a href="/create-team" style={{ color: "#bbdefb" }}>
-            Create a team
           </a>
         </Typography>
       </Box>

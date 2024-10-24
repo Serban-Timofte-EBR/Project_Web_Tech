@@ -76,8 +76,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           <button type="submit">Login</button>
         </form>
         <a href="/create-user-account">Create an account</a>
-        <br />
-        <a href="/create-team">Create a team</a>
       </div>
     </div>
   );
