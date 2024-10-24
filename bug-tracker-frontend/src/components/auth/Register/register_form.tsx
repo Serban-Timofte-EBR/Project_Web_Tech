@@ -10,6 +10,7 @@ const RegisterForm: React.FC = () => {
   const [password, setPassword] = useState("");
   const [team, setTeam] = useState("");
   const [backgroundImg, setBackgroundImg] = useState("");
+  const [role, setRole] = useState("");
 
   const dispatch: AppDispatch = useDispatch();
   const { projects, loading, error } = useSelector(
@@ -89,7 +90,7 @@ const RegisterForm: React.FC = () => {
             sx={{
               backgroundColor: "rgba(255, 255, 255, 0.2)",
               borderRadius: 1,
-              input: { color: "#fff" },
+              input: { color: "#000" },
             }}
           />
           <TextField
@@ -101,41 +102,57 @@ const RegisterForm: React.FC = () => {
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            InputLabelProps={{
-              style: { color: "#000" },
-            }}
             sx={{
               backgroundColor: "rgba(255, 255, 255, 0.2)",
               borderRadius: 1,
-              input: { color: "#fff" },
+              input: { color: "#000" },
+              marginBottom: 4,
             }}
           />
           <TextField
             select
             fullWidth
-            label="Projects"
-            value={team}
-            onChange={(e) => setTeam(e.target.value)}
-            helperText="Please select your project"
+            label="Role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            helperText="Please select your role"
             sx={{
               backgroundColor: "rgba(255, 255, 255, 0.2)",
               borderRadius: 1,
-              input: { color: "#fff" },
+              input: { color: "#0000" },
+              marginBottom: 4,
             }}
           >
-            {loading ? (
-              <MenuItem disabled>Loading available projects...</MenuItem>
-            ) : error ? (
-              <MenuItem disabled>Error loading available projects</MenuItem>
-            ) : (
-              projects.map((project: string) => (
-                <MenuItem key={project} value={project}>
-                  {project}
-                </MenuItem>
-              ))
-            )}
+            <MenuItem value="Tester">Tester</MenuItem>
+            <MenuItem value="Team Member">Team Member</MenuItem>
           </TextField>
-
+          {role === "Team Member" && (
+            <TextField
+              select
+              fullWidth
+              label="Projects"
+              value={team}
+              onChange={(e) => setTeam(e.target.value)}
+              helperText="Please select your project"
+              sx={{
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                borderRadius: 1,
+                input: { color: "#fff" },
+              }}
+            >
+              {loading ? (
+                <MenuItem disabled>Loading available projects...</MenuItem>
+              ) : error ? (
+                <MenuItem disabled>Error loading available projects</MenuItem>
+              ) : (
+                projects.map((project: string) => (
+                  <MenuItem key={project} value={project}>
+                    {project}
+                  </MenuItem>
+                ))
+              )}
+            </TextField>
+          )}
           <Button
             type="submit"
             variant="contained"
