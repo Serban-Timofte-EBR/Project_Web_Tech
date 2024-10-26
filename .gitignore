@@ -3,6 +3,7 @@ bug-tracker-frontend/node_modules/
 bug-tracker-backend/node_modules/
 
 bug-tracker-backend/*.env
+bug-tracker-backend/*.sqlite
 
 bug-tracker-frontend/dist/
 bug-tracker-frontend/build/
