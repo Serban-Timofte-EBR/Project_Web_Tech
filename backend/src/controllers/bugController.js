@@ -2,17 +2,14 @@ const { Bug, User, Team } = require("../models");
 const config = require("../config/config");
 
 const bugController = {
-  // Create a new bug (TST only)
   async createBug(req, res) {
     try {
-      // Check if user is a TST
       if (req.user.role !== config.userRoles.TST) {
         return res.status(403).json({ error: "Only testers can create bugs" });
       }
 
       const { team_id, severity, description, commit_link } = req.body;
 
-      // Validate team existence and user's access
       const team = await Team.findByPk(team_id);
       if (!team) {
         return res.status(404).json({ error: "Team not found" });

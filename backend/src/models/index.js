@@ -3,7 +3,6 @@ const Team = require("./team");
 const TeamMember = require("./teamMember");
 const Bug = require("./bug");
 
-// Team-User relationships through TeamMember
 Team.belongsToMany(User, {
   through: TeamMember,
   foreignKey: "team_id",
@@ -16,17 +15,15 @@ User.belongsToMany(Team, {
   otherKey: "team_id",
 });
 
-// Bug relationships
 Bug.belongsTo(Team, {
   foreignKey: "team_id",
-  onDelete: "CASCADE", // If team is deleted, delete associated bugs
+  onDelete: "CASCADE",
 });
 
 Team.hasMany(Bug, {
   foreignKey: "team_id",
 });
 
-// Bug-User relationships for reporter and assignee
 Bug.belongsTo(User, {
   foreignKey: "reporter_id",
   as: "reporter",
