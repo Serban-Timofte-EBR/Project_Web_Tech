@@ -1,14 +1,19 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
+import { registerUser } from "../redux/auths/authSlice";
 import RegisterForm from "../components/auth/Register/register_form";
 
 const RegisterPage: React.FC = () => {
-  const handleRegister = (email: string, password: string, team: string) => {
-    console.log("Registering with", email, password, team);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleRegister = (email: string, password: string, role: number) => {
+    dispatch(registerUser({ email, password, role }));
   };
 
   return (
     <div>
-      <RegisterForm />
+      <RegisterForm onSubmit={handleRegister} />
     </div>
   );
 };

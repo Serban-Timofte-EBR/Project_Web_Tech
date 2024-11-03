@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Box, Typography, MenuItem } from "@mui/material";
-import axios from "axios";
 import { fetchProjects } from "../../../redux/projects/projectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../redux/store";
 
-const RegisterForm: React.FC = () => {
+interface RegisterFormProps {
+  onSubmit: (email: string, password: string, role: number) => void;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [team, setTeam] = useState("");
@@ -21,33 +24,34 @@ const RegisterForm: React.FC = () => {
     dispatch(fetchProjects());
   }, [dispatch]);
 
-  const fetchBackgroundImage = async () => {
-    try {
-      const response = await axios.get(
-        "https://api.unsplash.com/photos/random",
-        {
-          headers: {
-            Authorization: `Client-ID ${process.env.REACT_APP_UNSPLASH_ACCESS_KEY}`,
-          },
-          params: { query: "modern technology", orientation: "landscape" },
-        }
-      );
-      setBackgroundImg(response.data.urls.full);
-    } catch (err) {
-      console.error("Error fetching background image: ", err);
-    }
-  };
+  // const fetchBackgroundImage = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://api.unsplash.com/photos/random",
+  //       {
+  //         headers: {
+  //           Authorization: `Client-ID ${process.env.REACT_APP_UNSPLASH_ACCESS_KEY}`,
+  //         },
+  //         params: { query: "modern technology", orientation: "landscape" },
+  //       }
+  //     );
+  //     setBackgroundImg(response.data.urls.full);
+  //   } catch (err) {
+  //     console.error("Error fetching background image: ", err);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchBackgroundImage();
-    const interval = setInterval(() => {
-      fetchBackgroundImage();
-    }, 120000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   fetchBackgroundImage();
+  //   const interval = setInterval(() => {
+  //     fetchBackgroundImage();
+  //   }, 120000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    onSubmit(email, password, role === "Tester" ? 0 : 1);
   };
 
   return (

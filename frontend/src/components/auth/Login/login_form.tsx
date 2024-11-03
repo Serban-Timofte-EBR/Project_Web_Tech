@@ -18,35 +18,35 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     onSubmit(email, password);
   };
 
-  const fetchRandomBackgroundImg = async () => {
-    try {
-      const response = await axios.get(
-        "https://source.unsplash.com/photos/random",
-        {
-          headers: {
-            Authorization: `Client-ID ${accessKey}`,
-          },
-          params: {
-            query: "technology",
-            orientation: "landscape",
-          },
-        }
-      );
-      setBackgroundImg(response.data.urls.full);
-    } catch (err) {
-      console.error("Error fetching backgroung imagine: ", err);
-    }
-  };
+  // const fetchRandomBackgroundImg = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://source.unsplash.com/photos/random",
+  //       {
+  //         headers: {
+  //           Authorization: `Client-ID ${accessKey}`,
+  //         },
+  //         params: {
+  //           query: "technology",
+  //           orientation: "landscape",
+  //         },
+  //       }
+  //     );
+  //     setBackgroundImg(response.data.urls.full);
+  //   } catch (err) {
+  //     console.error("Error fetching backgroung imagine: ", err);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchRandomBackgroundImg();
+  // useEffect(() => {
+  //   fetchRandomBackgroundImg();
 
-    const interval = setInterval(() => {
-      fetchRandomBackgroundImg();
-    }, 10000);
+  //   const interval = setInterval(() => {
+  //     fetchRandomBackgroundImg();
+  //   }, 10000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <div
