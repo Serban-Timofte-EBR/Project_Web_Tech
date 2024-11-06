@@ -6,16 +6,20 @@ import RegisterForm from "../components/auth/Register/register_form";
 
 const RegisterPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-
   const authError = useSelector((state: RootState) => state.auth.error);
 
-  const handleRegister = (email: string, password: string, role: number) => {
-    dispatch(registerUser({ email, password, role }));
+  const handleRegister = (
+    email: string,
+    password: string,
+    role: number,
+    teamID: number | null
+  ) => {
+    dispatch(registerUser({ email, password, role, teamID }));
   };
 
   return (
     <div>
-      <RegisterForm onSubmit={handleRegister} authError={authError}/>
+      <RegisterForm onSubmit={handleRegister} authError={authError} />
     </div>
   );
 };

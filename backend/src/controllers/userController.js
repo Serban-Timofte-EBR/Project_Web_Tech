@@ -13,19 +13,12 @@ const userController = {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const { email, password, role, teamName } = req.body;
+      const { email, password, role, teamID } = req.body;
 
       // Check if user already exists
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         return res.status(400).json({ error: "Email already registered" });
-      }
-
-      // For PM role, teamName is required
-      if (role === 0 && !teamName) {
-        return res.status(400).json({
-          error: "Team name is required for Project Manager registration",
-        });
       }
 
       // Start a transaction
@@ -41,20 +34,20 @@ const userController = {
         );
 
         // If PM role, find team and add user to it
-        if (role === 0) {
-          const team = await Team.findOne({
-            where: { name: teamName },
-            transaction: t,
-          });
+        if(role === 1) {
+          if(!teamID) {
+            throw new Error("Team ID is required for Team Member registration");
+          }
 
-          if (!team) {
+          const team = await Team.findByPk(teamID, { transaction: t });
+          if(!team) {
             throw new Error("Team not found");
           }
 
           await TeamMember.create(
             {
               user_id: user.id,
-              team_id: team.id,
+              team_id: teamID,
             },
             { transaction: t }
           );

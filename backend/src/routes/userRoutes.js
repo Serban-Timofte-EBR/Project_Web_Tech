@@ -11,10 +11,10 @@ const registerValidation = [
     min: 6,
   }),
   check("role", "Role must be either 0 (PM) or 1 (TST)").isIn([0, 1]),
-  check("teamName")
-    .if(check("role").equals("0"))
+  check("teamID")
+    .if(check("role").equals("1"))
     .notEmpty()
-    .withMessage("Team name is required for Project Manager registration"),
+    .withMessage("Team ID is required for Team Member registration"),
 ];
 
 const loginValidation = [

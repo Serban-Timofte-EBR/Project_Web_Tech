@@ -13,14 +13,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../redux/store";
 
 interface RegisterFormProps {
-  onSubmit: (email: string, password: string, role: number) => void;
+  onSubmit: (
+    email: string,
+    password: string,
+    role: number,
+    teamID: number | null
+  ) => void;
   authError: string | null;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [team, setTeam] = useState("");
+  const [teamId, setTeamId] = useState<number | null>(null);
   const [backgroundImg, setBackgroundImg] = useState("");
   const [role, setRole] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -45,34 +50,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
     }
   }, [authError]);
 
-  // const fetchBackgroundImage = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://api.unsplash.com/photos/random",
-  //       {
-  //         headers: {
-  //           Authorization: `Client-ID ${process.env.REACT_APP_UNSPLASH_ACCESS_KEY}`,
-  //         },
-  //         params: { query: "modern technology", orientation: "landscape" },
-  //       }
-  //     );
-  //     setBackgroundImg(response.data.urls.full);
-  //   } catch (err) {
-  //     console.error("Error fetching background image: ", err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchBackgroundImage();
-  //   const interval = setInterval(() => {
-  //     fetchBackgroundImage();
-  //   }, 120000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(email, password, role === "Tester" ? 0 : 1);
+    onSubmit(
+      email,
+      password,
+      role === "Tester" ? 0 : 1,
+      role === "Team Member" ? teamId : null
+    );
   };
 
   const handleCloseSnackbar = () => setOpenSnackbar(false);
@@ -160,10 +145,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
             <TextField
               select
               fullWidth
-              label="Projects"
-              value={team}
-              onChange={(e) => setTeam(e.target.value)}
-              helperText="Please select your project"
+              label="Teams"
+              value={teamId || ""}
+              onChange={(e) => setTeamId(Number(e.target.value))}
+              helperText="Please select your team"
               sx={{
                 backgroundColor: "rgba(255, 255, 255, 0.2)",
                 borderRadius: 1,
@@ -171,13 +156,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
               }}
             >
               {teamsLoading ? (
-                <MenuItem disabled>Loading available projects...</MenuItem>
+                <MenuItem disabled>Loading available teams...</MenuItem>
               ) : teamsError ? (
-                <MenuItem disabled>Error loading available projects</MenuItem>
+                <MenuItem disabled>Error loading available teams</MenuItem>
               ) : (
-                teams_no_secrets.map((team) => (
-                  <MenuItem key={team.id} value={team.name}>
-                    {team.name}
+                teams_no_secrets.map((teamOption) => (
+                  <MenuItem key={teamOption.id} value={teamOption.id}>
+                    {teamOption.name}
                   </MenuItem>
                 ))
               )}

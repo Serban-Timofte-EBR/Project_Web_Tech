@@ -54,11 +54,12 @@ export const loginUser = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (
-    userData: { email: string; password: string; role: number },
+    userData: { email: string; password: string; role: number, teamID?: number | null },
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(`${API_URL}/users/register`, userData);
+      // const response = await axios.post(`${API_URL}/users/register`, userData);
+      const response = await axios.post(`http://localhost:8000/api/users/register`, userData);
       const { token, user } = response.data;
 
       // Store token and user in localStorage
