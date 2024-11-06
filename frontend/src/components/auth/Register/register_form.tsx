@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Box, Typography, MenuItem } from "@mui/material";
 import { fetchProjects } from "../../../redux/projects/projectSlice";
+import { fetchTeamsNoSecrets } from "../../../redux/teams/teamsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../redux/store";
 
@@ -16,13 +17,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
   const [role, setRole] = useState("");
 
   const dispatch: AppDispatch = useDispatch();
-  const { projects, loading, error } = useSelector(
-    (state: RootState) => state.projects
-  );
+
+  const { teams_no_secrets, loading: teamsLoading, error: teamsError } = useSelector((state: RootState) => state.teams);
 
   useEffect(() => {
-    dispatch(fetchProjects());
-  }, [dispatch]);
+    if(role === "Team Member") {
+      dispatch(fetchTeamsNoSecrets());
+    }
+  }, [dispatch, role]);
 
   // const fetchBackgroundImage = async () => {
   //   try {
@@ -147,14 +149,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
                 input: { color: "#fff" },
               }}
             >
-              {loading ? (
+              {teamsLoading ? (
                 <MenuItem disabled>Loading available projects...</MenuItem>
-              ) : error ? (
+              ) : teamsError ? (
                 <MenuItem disabled>Error loading available projects</MenuItem>
               ) : (
-                projects.map((project: string) => (
-                  <MenuItem key={project} value={project}>
-                    {project}
+                teams_no_secrets.map((team) => (
+                  <MenuItem key={team.id} value={team.name}>
+                    {team.name}
                   </MenuItem>
                 ))
               )}

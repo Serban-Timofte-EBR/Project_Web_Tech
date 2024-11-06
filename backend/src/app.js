@@ -8,6 +8,7 @@ const { sequelize, testConnection } = require("./config/database");
 const { seedTeams } = require("./config/seedData");
 // Import routes
 const userRoutes = require("./routes/userRoutes");
+const teamRoutes = require("./routes/teamRoutes")
 // const projectRoutes = require('./routes/projectRoutes');
 // const bugRoutes = require('./routes/bugRoutes');
 
@@ -41,6 +42,7 @@ app.get("/health", (req, res) => {
 
 // API Routes
 app.use("/api/users", userRoutes);
+app.use("/api/teams", teamRoutes);
 // app.use('/api/projects', projectRoutes);
 // app.use('/api/bugs', bugRoutes);
 
