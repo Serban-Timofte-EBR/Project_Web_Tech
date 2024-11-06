@@ -4,7 +4,6 @@ import authReducer from "./auths/authSlice";
 
 const store = configureStore({
   reducer: {
-    projects: teamsReducer,
     auth: authReducer,
     teams: teamsReducer,
   },

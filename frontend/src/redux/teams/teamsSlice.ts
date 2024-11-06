@@ -42,7 +42,8 @@ export const fetchTeamsNoSecrets = createAsyncThunk<
     );
     return data;
   } catch (error: any) {
-    return thunkApi.rejectWithValue(error.response?.data?.message);
+    const error_message = error.response?.data?.message || "An unknown error occurred.";
+    return thunkApi.rejectWithValue(error_message);
   }
 });
 

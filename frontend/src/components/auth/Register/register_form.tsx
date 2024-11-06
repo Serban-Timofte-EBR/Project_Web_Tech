@@ -1,30 +1,49 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Box, Typography, MenuItem } from "@mui/material";
-import { fetchProjects } from "../../../redux/projects/projectSlice";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  MenuItem,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { fetchTeamsNoSecrets } from "../../../redux/teams/teamsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../redux/store";
 
 interface RegisterFormProps {
   onSubmit: (email: string, password: string, role: number) => void;
+  authError: string | null;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [team, setTeam] = useState("");
   const [backgroundImg, setBackgroundImg] = useState("");
   const [role, setRole] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { teams_no_secrets, loading: teamsLoading, error: teamsError } = useSelector((state: RootState) => state.teams);
+  const {
+    teams_no_secrets,
+    loading: teamsLoading,
+    error: teamsError,
+  } = useSelector((state: RootState) => state.teams);
 
   useEffect(() => {
-    if(role === "Team Member") {
+    if (role === "Team Member") {
       dispatch(fetchTeamsNoSecrets());
     }
   }, [dispatch, role]);
+
+  useEffect(() => {
+    if (authError) {
+      setOpenSnackbar(true);
+    }
+  }, [authError]);
 
   // const fetchBackgroundImage = async () => {
   //   try {
@@ -55,6 +74,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
     e.preventDefault();
     onSubmit(email, password, role === "Tester" ? 0 : 1);
   };
+
+  const handleCloseSnackbar = () => setOpenSnackbar(false);
 
   return (
     <Box
@@ -182,6 +203,20 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
           </a>
         </Typography>
       </Box>
+      <Snackbar
+        open={openSnackbar && Boolean(authError)}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {authError}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
