@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-const userController = require("../controllers/userController");
-const { auth } = require("../middleware/auth");
+const { register, login } = require("../controllers/userController");
 
 // Validation middleware
 const registerValidation = [
@@ -23,8 +22,7 @@ const loginValidation = [
 ];
 
 // Routes
-router.post("/register", registerValidation, userController.register);
-router.post("/login", loginValidation, userController.login);
-router.get("/teams", userController.getTeams);
+router.post("/register", registerValidation, register);
+router.post("/login", loginValidation, login);
 
 module.exports = router;

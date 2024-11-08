@@ -1,4 +1,4 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -8,13 +8,15 @@ const { sequelize, testConnection } = require("./config/database");
 const { seedTeams } = require("./config/seedData");
 // Import routes
 const userRoutes = require("./routes/userRoutes");
-const teamRoutes = require("./routes/teamRoutes")
+const teamRoutes = require("./routes/teamRoutes");
 // const projectRoutes = require('./routes/projectRoutes');
 // const bugRoutes = require('./routes/bugRoutes');
 
 // Initialize express app
 const app = express();
 
+// Load environment variables from .env file
+dotenv.config();
 // Middleware
 app.use(
   cors({
@@ -89,7 +91,6 @@ const gracefulShutdown = async (signal) => {
   }
 };
 
-// Start server function
 const startServer = async () => {
   try {
     // Connect and sync database
@@ -137,9 +138,6 @@ process.on("unhandledRejection", (error) => {
   gracefulShutdown("UNHANDLED_REJECTION");
 });
 
-// Start the server if this file is run directly
-if (require.main === module) {
-  startServer();
-}
+startServer();
 
 module.exports = app;

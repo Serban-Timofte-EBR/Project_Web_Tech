@@ -15,6 +15,8 @@ const userController = {
 
       const { email, password, role, teamID } = req.body;
 
+      console.log("Registering user:", email, role, teamID);
+
       // Check if user already exists
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
@@ -34,13 +36,13 @@ const userController = {
         );
 
         // If PM role, find team and add user to it
-        if(role === 1) {
-          if(!teamID) {
+        if (role === 1) {
+          if (!teamID) {
             throw new Error("Team ID is required for Team Member registration");
           }
 
           const team = await Team.findByPk(teamID, { transaction: t });
-          if(!team) {
+          if (!team) {
             throw new Error("Team not found");
           }
 
