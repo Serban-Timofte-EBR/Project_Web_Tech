@@ -6,6 +6,7 @@ import ProjectCard from "../components/dashboard/project/project_card";
 import MarginUp from "../components/utils/margin_up";
 
 const ProjectPage: React.FC = () => {
+  console.log("TM Page");
   return (
     <>
       <MarginUp />

@@ -8,6 +8,7 @@ import {
   Divider,
   Box,
 } from "@mui/material";
+import TestersBugTable from "../bugs/testers_bug_table";
 
 interface ProjectCardProps {
   project_team_name: string;
@@ -37,6 +38,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         flexDirection: "column",
         justifyContent: "space-between",
         marginBottom: "20px",
+        overflowY: "auto",
       }}
     >
       <CardContent>
@@ -97,9 +99,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </Button>
         )}
         {role === "Tester" && (
-          <Button variant="contained" size="small" color="primary">
-            Add Bug
-          </Button>
+          <TestersBugTable />
         )}
       </CardActions>
     </Card>

@@ -6,6 +6,7 @@ import ProjectCard from "../components/dashboard/project/project_card";
 import MarginUp from "../components/utils/margin_up";
 
 const ProjectDashboard: React.FC = () => {
+  console.log("Testers Page")
   return (
     <>
       <MarginUp />
@@ -25,7 +26,7 @@ const ProjectDashboard: React.FC = () => {
           project_team_name="Project Team Name"
           description="Project Description"
           repo="Repo Here"
-          role="Team Member"
+          role="Tester"
         />
         <ProjectCard
           project_team_name="Project Team Name"
