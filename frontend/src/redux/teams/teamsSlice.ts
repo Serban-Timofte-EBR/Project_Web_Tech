@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { User } from "../auths/authSlice";
 import axios from "axios";
 
 export interface Team {
@@ -8,11 +9,12 @@ export interface Team {
   repository: string;
   createdAt: Date;
   updatedAr: Date;
+  users: User[];
 }
 
 export type Team_No_Secrets = Omit<
   Team,
-  "description" | "repository" | "createdAt" | "updatedAr"
+  "description" | "repository" | "createdAt" | "updatedAr" | "users"
 >;
 
 interface TeamsState {
@@ -42,8 +44,29 @@ export const fetchTeamsNoSecrets = createAsyncThunk<
     );
     return data;
   } catch (error: any) {
-    const error_message = error.response?.data?.message || "An unknown error occurred.";
+    const error_message =
+      error.response?.data?.message || "An unknown error occurred.";
     return thunkApi.rejectWithValue(error_message);
+  }
+});
+
+export const fetchTeams = createAsyncThunk<
+  Team[],
+  void,
+  { rejectValue: string }
+>("teams/fetchTeams", async (_, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get("http://localhost:8000/api/teams", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.error || "Failed to fetch teams"
+    );
   }
 });
 
@@ -70,11 +93,24 @@ const teamsSlice = createSlice({
       )
       .addCase(fetchTeamsNoSecrets.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string || "Failed to fetch teams without secrets";
+        state.error =
+          (action.payload as string) || "Failed to fetch teams without secrets";
+      })
+      .addCase(fetchTeams.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTeams.fulfilled, (state, action: PayloadAction<Team[]>) => {
+        state.loading = false;
+        state.teams = action.payload;
+      })
+      .addCase(fetchTeams.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch teams";
       });
   },
 });
 
-export const {resetMessage} = teamsSlice.actions;
+export const { resetMessage } = teamsSlice.actions;
 
 export default teamsSlice.reducer;
