@@ -2,9 +2,6 @@ frontend/node_modules/
 
 backend/node_modules/
 
-
-backend/.env
-
 backend/*.sqlite
 
 frontend/dist/
@@ -28,9 +25,6 @@ frontend/.npm/
 
 frontend/*.tsbuildinfo
 frontend/tsconfig.tsbuildinfo
-frontend/.env
-
-
 
 .DS_Store
 
