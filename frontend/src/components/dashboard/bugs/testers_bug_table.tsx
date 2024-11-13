@@ -15,8 +15,12 @@ import {
   TextField,
   MenuItem,
   Typography,
+  Paper,
 } from "@mui/material";
 
+const severityLevels = ["LOW", "MEDIUM", "HIGH"];
+
+// Mock data for bugs
 const mockBugs = [
   {
     id: 1,
@@ -34,10 +38,8 @@ const mockBugs = [
   },
 ];
 
-const severityLevels = ["LOW", "MEDIUM", "HIGH"];
-
 const TestersBugTable: React.FC = () => {
-  const [bugs, setBugs] = useState(mockBugs); // To be replaced with Redux state
+  const [bugs, setBugs] = useState(mockBugs); // Replace with Redux state in the future
   const [openDialog, setOpenDialog] = useState(false);
   const [newBug, setNewBug] = useState({
     severity: "",
@@ -65,57 +67,87 @@ const TestersBugTable: React.FC = () => {
         status: "OPEN",
       },
     ];
-    setBugs(updatedBugs); // To be replaced with Redux action
+    setBugs(updatedBugs); // Replace with Redux action in the future
     handleCloseDialog();
   };
 
   return (
-    <Box>
-      <Typography variant="h6" gutterBottom>
-        Bugs
+    <Box sx={{ marginTop: 2, color: "#fff" }}>
+      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+        Reported Bugs
       </Typography>
-      <TableContainer>
+
+      <TableContainer
+        component={Paper}
+        sx={{
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderRadius: 2,
+          boxShadow: 3,
+          overflow: "hidden",
+        }}
+      >
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Severity</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Commit Link</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>ID</TableCell>
+              <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                Severity
+              </TableCell>
+              <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                Description
+              </TableCell>
+              <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                Commit Link
+              </TableCell>
+              <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                Status
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {bugs.map((bug) => (
-              <TableRow key={bug.id}>
-                <TableCell>{bug.id}</TableCell>
-                <TableCell>{bug.severity}</TableCell>
-                <TableCell>{bug.description}</TableCell>
+              <TableRow
+                key={bug.id}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  },
+                }}
+              >
+                <TableCell sx={{ color: "#fff" }}>{bug.id}</TableCell>
+                <TableCell sx={{ color: "#fff" }}>{bug.severity}</TableCell>
+                <TableCell sx={{ color: "#fff" }}>{bug.description}</TableCell>
                 <TableCell>
                   <a
                     href={bug.commit_link}
                     target="_blank"
                     rel="noopener noreferrer"
+                    style={{ color: "#bbdefb", textDecoration: "none" }}
                   >
                     View Commit
                   </a>
                 </TableCell>
-                <TableCell>{bug.status}</TableCell>
+                <TableCell sx={{ color: "#fff" }}>{bug.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
       <Button
         variant="contained"
-        color="primary"
-        sx={{ mt: 2 }}
+        sx={{
+          marginTop: 3,
+          backgroundColor: "#6a82fb",
+          "&:hover": {
+            backgroundColor: "#5a72eb",
+          },
+        }}
         onClick={handleOpenDialog}
       >
-        Add Bug
+        Report a Bug
       </Button>
 
-      {/* Add Bug Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Add New Bug</DialogTitle>
         <DialogContent>
@@ -127,6 +159,7 @@ const TestersBugTable: React.FC = () => {
             value={newBug.severity}
             onChange={handleChange}
             margin="normal"
+            sx={{ marginBottom: 2 }}
           >
             {severityLevels.map((level) => (
               <MenuItem key={level} value={level}>
@@ -143,6 +176,7 @@ const TestersBugTable: React.FC = () => {
             margin="normal"
             multiline
             rows={3}
+            sx={{ marginBottom: 2 }}
           />
           <TextField
             fullWidth
@@ -151,6 +185,7 @@ const TestersBugTable: React.FC = () => {
             value={newBug.commit_link}
             onChange={handleChange}
             margin="normal"
+            sx={{ marginBottom: 2 }}
           />
         </DialogContent>
         <DialogActions>
@@ -172,4 +207,4 @@ const TestersBugTable: React.FC = () => {
   );
 };
 
-export default TestersBugTable;
+export default TestersBugTable; 

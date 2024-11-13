@@ -5,6 +5,7 @@ export interface User {
   id: number;
   email: string;
   role: number; // 0=PM, 1=TST
+  teamID?: number | null;
 }
 
 export interface AuthState {
@@ -17,7 +18,6 @@ export interface AuthState {
 
 const API_URL = "http://localhost:8000/api";
 
-// Check if there's a stored token and user data
 const storedToken = localStorage.getItem("token");
 const storedUser = localStorage.getItem("user");
 
@@ -29,7 +29,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Async thunks for authentication
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (
@@ -40,7 +39,6 @@ export const loginUser = createAsyncThunk(
       const response = await axios.post(`${API_URL}/users/login`, credentials);
       const { token, user } = response.data;
 
-      // Store token and user in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
@@ -69,7 +67,6 @@ export const registerUser = createAsyncThunk(
       );
       const { token, user } = response.data;
 
-      // Store token and user in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
@@ -92,7 +89,6 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.error = null;
 
-      // Clear localStorage
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     },
@@ -114,6 +110,9 @@ const authSlice = createSlice({
           state.token = action.payload.token;
           state.user = action.payload.user;
           state.error = null;
+
+          localStorage.setItem("token", action.payload.token);
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
         }
       )
       .addCase(loginUser.rejected, (state, action) => {
@@ -133,6 +132,9 @@ const authSlice = createSlice({
           state.token = action.payload.token;
           state.user = action.payload.user;
           state.error = null;
+
+          localStorage.setItem("token", action.payload.token);
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
         }
       )
       .addCase(registerUser.rejected, (state, action) => {
@@ -141,5 +143,6 @@ const authSlice = createSlice({
       });
   },
 });
+
 export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer;

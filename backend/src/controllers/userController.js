@@ -110,16 +110,30 @@ const userController = {
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
+      // Fetch team_id if the user is a Team Member
+      let teamID = null;
+      if (user.role === 1) {
+        // Role 1 indicates a Team Member
+        const teamMember = await TeamMember.findOne({
+          where: { user_id: user.id },
+        });
+        if (teamMember) {
+          teamID = teamMember.team_id;
+        }
+      }
+
       // Generate JWT token
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: "24h",
       });
 
+      // Respond with user details and token
       res.json({
         user: {
           id: user.id,
           email: user.email,
           role: user.role,
+          teamID: teamID, // Include teamID only for Team Members
         },
         token,
       });
