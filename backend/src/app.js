@@ -10,7 +10,7 @@ const { seedTeams } = require("./config/seedData");
 const userRoutes = require("./routes/userRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 // const projectRoutes = require('./routes/projectRoutes');
-// const bugRoutes = require('./routes/bugRoutes');
+const bugRoutes = require('./routes/bugRoutes');
 
 // Initialize express app
 const app = express();
@@ -46,7 +46,7 @@ app.get("/health", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/teams", teamRoutes);
 // app.use('/api/projects', projectRoutes);
-// app.use('/api/bugs', bugRoutes);
+app.use('/api/bugs', bugRoutes);
 
 // Handle undefined routes
 app.use("*", (req, res) => {

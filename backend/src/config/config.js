@@ -29,8 +29,8 @@ const config = {
   },
 
   userRoles: {
-    PM: 0,
-    TST: 1,
+    PM: 1,
+    TST: 0,
   },
 
   validation: {

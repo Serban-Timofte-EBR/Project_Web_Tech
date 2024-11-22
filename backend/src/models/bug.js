@@ -22,7 +22,7 @@ const Bug = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "users",
+        model: "user",
         key: "id",
       },
     },
@@ -30,7 +30,7 @@ const Bug = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: "users",
+        model: "user",
         key: "id",
       },
     },
