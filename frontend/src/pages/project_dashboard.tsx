@@ -1,5 +1,3 @@
-// This page will be used for testers to see all the projects
-
 import React, { useEffect } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -51,6 +49,7 @@ const ProjectDashboard: React.FC = () => {
             description={team.description}
             repo={team.repository}
             role="Tester"
+            teamId={team.id}
           />
         ))}
       </Box>

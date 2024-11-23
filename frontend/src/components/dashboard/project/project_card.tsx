@@ -15,6 +15,7 @@ interface ProjectCardProps {
   description: string;
   repo: string;
   role?: string;
+  teamId: number; 
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -22,6 +23,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   description,
   repo,
   role,
+  teamId, 
 }) => {
   return (
     <Card
@@ -70,7 +72,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             variant="body2"
             sx={{
               color: "#bbdefb",
-              wordWrap: "break-word", 
+              wordWrap: "break-word",
             }}
           >
             <a
@@ -98,9 +100,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             Edit Project
           </Button>
         )}
-        {role === "Tester" && (
-          <TestersBugTable />
-        )}
+        {role === "Tester" && <TestersBugTable teamId={teamId} />}
       </CardActions>
     </Card>
   );
