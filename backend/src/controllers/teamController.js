@@ -82,13 +82,13 @@ const teamController = {
   async getAllTeamsWithoutSecrets(req, res) {
     try {
       const teams_without_secrets = await Team.findAll({
-        attributes: ["id", "name"]
+        attributes: ["id", "name"],
       });
       res.status(200).json(teams_without_secrets);
-    } catch(error) {
+    } catch (error) {
       res.status(500).json({ error: "Error retrieving teams" });
     }
-  }
+  },
 };
 
 module.exports = teamController;
