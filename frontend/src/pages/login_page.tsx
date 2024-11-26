@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
         if (role === 1) {
           navigate("/project"); 
         } else if (role === 0) {
-          navigate("/projects");
+          navigate("/testers-dashboard");
         }
       }
     } catch (error) {

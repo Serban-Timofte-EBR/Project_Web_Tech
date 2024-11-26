@@ -6,7 +6,7 @@ body {
   justify-content: center;
   align-items: center;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #1e2a78, #6a82fb);
+  background: black 
 }
 
 .form-container {
@@ -55,10 +55,7 @@ button {
   margin-top: 20px;
 }
 
-button:hover {
-  background-color: #5a72eb;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
+
 
 h1 {
   margin-bottom: 30px;

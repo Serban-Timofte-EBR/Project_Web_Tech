@@ -7,9 +7,10 @@ import {
 } from "react-router-dom";
 import LoginPage from "./pages/login_page";
 import RegisterPage from "./pages/register_page";
-import ProjectDashboard from "./pages/project_dashboard";
 import ProjectPage from "./pages/project";
 import { useAuth } from "./hooks/useAuth";
+import TeamSelectionPage from "./pages/testers_dashboard";
+import TeamPage from "./pages/team_page";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -28,18 +29,26 @@ const App: React.FC = () => {
         <Route path="/login" Component={LoginPage} />
         <Route path="/create-user-account" Component={RegisterPage} />
         <Route
-          path="/projects"
-          element={
-            <ProtectedRoute>
-              <ProjectDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/project"
           element={
             <ProtectedRoute>
               <ProjectPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/testers-dashboard"
+          element={
+            <ProtectedRoute>
+              <TeamSelectionPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/testers-dashboard/team/:teamId"
+          element={
+            <ProtectedRoute>
+              <TeamPage />
             </ProtectedRoute>
           }
         />

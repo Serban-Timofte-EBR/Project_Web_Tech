@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
-interface Bug {
+export interface Bug {
   id: number;
   team_id: number;
   reporter_id: number;
@@ -122,18 +122,18 @@ const bugSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchBugs.pending, (state, action) => {
-        const teamId = action.meta.arg; // This is now properly typed
+        const teamId = action.meta.arg;
         state.loading[teamId] = true;
         state.error[teamId] = null;
       })
       .addCase(fetchBugs.fulfilled, (state, action) => {
-        const teamId = action.meta.arg; // This is now properly typed
+        const teamId = action.meta.arg;
         state.bugsByTeam[teamId] = action.payload;
         state.loading[teamId] = false;
         state.error[teamId] = null;
       })
       .addCase(fetchBugs.rejected, (state, action) => {
-        const teamId = action.meta.arg; // This is now properly typed
+        const teamId = action.meta.arg;
         state.loading[teamId] = false;
         state.error[teamId] = action.payload as string;
       })

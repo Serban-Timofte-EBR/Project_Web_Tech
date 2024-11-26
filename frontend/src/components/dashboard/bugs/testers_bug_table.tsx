@@ -151,12 +151,12 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
           mb: 3,
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Reported Bugs
+        <Typography variant="h6" sx={{ fontWeight: "bold", color: "white" }}>
+          Bugs
           <Chip
             label={`Total: ${teamBugs.length}`}
             size="small"
-            sx={{ ml: 2, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+            sx={{ ml: 2, backgroundColor: "rgba(255, 255, 255, 0.1)", color: "#fff" }}
           />
         </Typography>
       </Box>
