@@ -23,15 +23,15 @@ interface Bug {
 }
 
 interface BugState {
-  bugs: Bug[];
-  loading: boolean;
-  error: string | null;
+  bugsByTeam: Record<number, Bug[]>;
+  loading: Record<number, boolean>;
+  error: Record<number, string | null>;
 }
 
 const initialState: BugState = {
-  bugs: [],
-  loading: false,
-  error: null,
+  bugsByTeam: {},
+  loading: {},
+  error: {},
 };
 
 export const fetchBugs = createAsyncThunk(
@@ -48,7 +48,7 @@ export const fetchBugs = createAsyncThunk(
       );
       if (!response.ok) throw new Error("Failed to fetch bugs");
       const data = await response.json();
-      return data as Bug[];
+      return Array.isArray(data) ? data : [data];
     } catch (error) {
       return rejectWithValue("Failed to load bugs");
     }
@@ -121,49 +121,60 @@ const bugSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchBugs.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      .addCase(fetchBugs.pending, (state, action) => {
+        const teamId = action.meta.arg; // This is now properly typed
+        state.loading[teamId] = true;
+        state.error[teamId] = null;
       })
-      .addCase(fetchBugs.fulfilled, (state, action: PayloadAction<Bug[]>) => {
-        state.bugs = action.payload;
-        state.loading = false;
-        state.error = null;
+      .addCase(fetchBugs.fulfilled, (state, action) => {
+        const teamId = action.meta.arg; // This is now properly typed
+        state.bugsByTeam[teamId] = action.payload;
+        state.loading[teamId] = false;
+        state.error[teamId] = null;
       })
       .addCase(fetchBugs.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+        const teamId = action.meta.arg; // This is now properly typed
+        state.loading[teamId] = false;
+        state.error[teamId] = action.payload as string;
       })
       .addCase(createBug.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading[-1] = true;
+        state.error[-1] = null;
       })
       .addCase(createBug.fulfilled, (state, action: PayloadAction<Bug>) => {
-        state.bugs.push(action.payload);
-        state.loading = false;
-        state.error = null;
+        const teamId = action.payload.team_id;
+        if (!state.bugsByTeam[teamId]) {
+          state.bugsByTeam[teamId] = [];
+        }
+        state.bugsByTeam[teamId].push(action.payload);
+        state.loading[-1] = false;
+        state.error[-1] = null;
       })
       .addCase(createBug.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+        state.loading[-1] = false;
+        state.error[-1] = action.payload as string;
       })
       .addCase(updateBug.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading[-1] = true;
+        state.error[-1] = null;
       })
       .addCase(updateBug.fulfilled, (state, action: PayloadAction<Bug>) => {
-        const index = state.bugs.findIndex(
-          (bug) => bug.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.bugs[index] = action.payload;
+        const teamId = action.payload.team_id;
+        const bugId = action.payload.id;
+        if (state.bugsByTeam[teamId]) {
+          const index = state.bugsByTeam[teamId].findIndex(
+            (bug) => bug.id === bugId
+          );
+          if (index !== -1) {
+            state.bugsByTeam[teamId][index] = action.payload;
+          }
         }
-        state.loading = false;
-        state.error = null;
+        state.loading[-1] = false;
+        state.error[-1] = null;
       })
       .addCase(updateBug.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+        state.loading[-1] = false;
+        state.error[-1] = action.payload as string;
       });
   },
 });

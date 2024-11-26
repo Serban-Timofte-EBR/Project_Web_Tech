@@ -7,6 +7,7 @@ import {
   Typography,
   Divider,
   Box,
+  Link
 } from "@mui/material";
 import TestersBugTable from "../bugs/testers_bug_table";
 
@@ -15,7 +16,7 @@ interface ProjectCardProps {
   description: string;
   repo: string;
   role?: string;
-  teamId: number; 
+  teamId: number;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -23,86 +24,97 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   description,
   repo,
   role,
-  teamId, 
+  teamId,
 }) => {
   return (
-    <Card
+    <Box
       sx={{
         width: "100%",
-        minHeight: 300,
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        backdropFilter: "blur(10px)",
-        color: "#fff",
+        backgroundColor: "rgba(82, 87, 182, 0.35)",
         borderRadius: 2,
-        boxShadow: 3,
-        padding: "20px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        marginBottom: "20px",
-        overflowY: "auto",
+        p: 3,
+        mb: 3,
       }}
     >
-      <CardContent>
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-          {project_team_name}
-        </Typography>
-        <Divider
+      {/* Team Name */}
+      <Typography
+        variant="h5"
+        sx={{
+          color: "#fff",
+          fontWeight: "500",
+          mb: 4,
+        }}
+      >
+        {project_team_name}
+      </Typography>
+
+      {/* Description Section */}
+      <Box sx={{ mb: 3 }}>
+        <Typography
+          variant="body1"
           sx={{
-            marginTop: 1,
-            marginBottom: 2,
-            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            color: "#fff",
+            opacity: 0.7,
+            mb: 1,
           }}
-        />
+        >
+          Description:
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#fff",
+            opacity: 0.9,
+          }}
+        >
+          {description}
+        </Typography>
+      </Box>
 
-        <Box sx={{ marginBottom: 2 }}>
-          <Typography variant="body1" sx={{ fontWeight: "medium", mb: 1 }}>
-            Description:
-          </Typography>
-          <Typography variant="body2" sx={{ color: "#ccc" }}>
-            {description}
-          </Typography>
-        </Box>
+      {/* Repository Section */}
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#fff",
+            opacity: 0.7,
+            mb: 1,
+          }}
+        >
+          Repository:
+        </Typography>
+        <Link
+          href={repo}
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{
+            color: "#fff",
+            opacity: 0.9,
+            textDecoration: "none",
+            "&:hover": {
+              textDecoration: "underline",
+            },
+          }}
+        >
+          {repo}
+        </Link>
+      </Box>
 
-        <Box>
-          <Typography variant="body1" sx={{ fontWeight: "medium", mb: 1 }}>
-            Repository:
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              color: "#bbdefb",
-              wordWrap: "break-word",
-            }}
-          >
-            <a
-              href={repo}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "#bbdefb" }}
-            >
-              {repo}
-            </a>
-          </Typography>
-        </Box>
-      </CardContent>
-
+      {/* Divider */}
       <Divider
         sx={{
-          marginY: 2,
-          backgroundColor: "rgba(255, 255, 255, 0.5)",
+          borderColor: "rgba(255, 255, 255, 0.1)",
+          my: 3,
         }}
       />
 
-      <CardActions sx={{ justifyContent: "flex-start" }}>
-        {role === "Team Member" && (
-          <Button variant="contained" size="small" color="primary">
-            Edit Project
-          </Button>
-        )}
-        {role === "Tester" && <TestersBugTable teamId={teamId} />}
-      </CardActions>
-    </Card>
+      {/* Bugs Section */}
+      {role === "Tester" && (
+        <Box>
+          <TestersBugTable teamId={teamId} />
+        </Box>
+      )}
+    </Box>
   );
 };
 

@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import teamsReducer from "./teams/teamsSlice";
 import authReducer from "./auths/authSlice";
-import buugReducer from "./bugs/bugsSlice";
+import bugReducer from "./bugs/bugsSlice";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     teams: teamsReducer,
-    bugs: buugReducer,
+    bugs: bugReducer,
   },
 });
 

@@ -5,7 +5,7 @@ const MarginUp: React.FC = () => {
   return (
     <Box
       sx={{
-        height: "10vh",
+        height: "180vh",
       }}
     />
   );
