@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
         console.log("Login successful");
         const { role } = action.payload.user;
         if (role === 1) {
-          navigate("/project"); 
+          navigate("/members-dashboard"); 
         } else if (role === 0) {
           navigate("/testers-dashboard");
         }

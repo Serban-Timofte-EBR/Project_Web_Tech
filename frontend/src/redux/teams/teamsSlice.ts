@@ -18,6 +18,7 @@ export type Team_No_Secrets = Omit<
 >;
 
 interface TeamsState {
+  user_team: Team | null;
   teams: Team[];
   teams_no_secrets: Team_No_Secrets[];
   loading: boolean;
@@ -26,6 +27,7 @@ interface TeamsState {
 }
 
 const initialState: TeamsState = {
+  user_team: null,
   teams: [],
   teams_no_secrets: [],
   loading: false,
@@ -70,6 +72,32 @@ export const fetchTeams = createAsyncThunk<
   }
 });
 
+export const fetchTeamById = createAsyncThunk(
+  "teams/fetchTeamById",
+  async (teamID: number, {rejectWithValue}) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(`http://localhost:8000/api/teams/${teamID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      const data = response.data;
+      const cleanData = {
+        ...data,
+        users: data.Users,
+      }
+      delete cleanData.Users;
+
+      return cleanData;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || "Failed to fetch team");
+    }
+  }
+) 
+
 const teamsSlice = createSlice({
   name: "teams",
   initialState,
@@ -107,6 +135,18 @@ const teamsSlice = createSlice({
       .addCase(fetchTeams.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch teams";
+      })
+      .addCase(fetchTeamById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTeamById.fulfilled, (state, action: PayloadAction<Team>) => {
+        state.loading = false;
+        state.user_team = action.payload;
+      })
+      .addCase(fetchTeamById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) || "Failed to fetch team";
       });
   },
 });
