@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBugs } from "../../../redux/bugs/bugsSlice";
+import { fetchBugs, createBug } from "../../../redux/bugs/bugsSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import {
   Box,
@@ -18,18 +18,16 @@ import {
   IconButton,
   Tooltip,
   TablePagination,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
 import {
-  Search as SearchIcon,
   OpenInNew as OpenInNewIcon,
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
   Warning as WarningIcon,
   Info as InfoIcon,
-  FilterList as FilterListIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
+import CreateBugModal from "./create_bug_modal";
 
 interface TestersBugTableProps {
   teamId?: number;
@@ -39,6 +37,7 @@ const SEVERITY_CONFIG = {
   high: { color: "#ff4444", icon: ErrorIcon, label: "High" },
   medium: { color: "#ffbb33", icon: WarningIcon, label: "Medium" },
   low: { color: "#00C851", icon: InfoIcon, label: "Low" },
+  critical: { color: "#d32f2f", icon: ErrorIcon, label: "Critical" },
 } as const;
 
 const STATUS_CONFIG = {
@@ -53,13 +52,18 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
   const { bugsByTeam, loading, error } = useSelector(
     (state: RootState) => state.bugs
   );
+  const reporterID = useSelector((state: RootState) => state.auth.user?.id);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
 
-  const teamBugs = teamId ? bugsByTeam[teamId] || [] : [];
+  const teamBugs = useMemo(
+    () => (teamId ? bugsByTeam[teamId] || [] : []),
+    [teamId, bugsByTeam]
+  );
+  console.log(teamBugs);
   const isLoading = teamId ? loading[teamId] : false;
   const teamError = teamId ? error[teamId] : null;
 
@@ -69,13 +73,28 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
     }
   }, [dispatch, teamId, bugsByTeam]);
 
-  const filteredBugs = useMemo(() => {
-    return teamBugs.filter((bug) =>
-      Object.values(bug).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [teamBugs, searchTerm]);
+  const handleCreateBug = async (newBug: {
+    team_id: number;
+    severity: string;
+    description: string;
+    commit_link: string;
+  }) => {
+    const bugPayload = {
+      ...newBug,
+      reporter_id: reporterID || 0,
+      assignee_id: null,
+      status: "open",
+      fix_commit_link: null,
+    };
+    
+    const result = await dispatch(createBug(bugPayload));
+
+    if (createBug.fulfilled.match(result)) {
+      dispatch(fetchBugs(teamId as number));
+    } else {
+      console.error("Failed to create bug");
+    }
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -143,12 +162,14 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
 
   return (
     <Box sx={{ width: "100%" }}>
+      {/* Header Section */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           mb: 3,
+          margin: 2,
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: "bold", color: "white" }}>
@@ -156,11 +177,35 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
           <Chip
             label={`Total: ${teamBugs.length}`}
             size="small"
-            sx={{ ml: 2, backgroundColor: "rgba(255, 255, 255, 0.1)", color: "#fff" }}
+            sx={{
+              ml: 2,
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              color: "#fff",
+            }}
           />
         </Typography>
+        <Tooltip title="Create a new bug">
+          <IconButton
+            onClick={() => setIsModalOpen(true)}
+            sx={{
+              color: "white",
+              padding: "6px",
+            }}
+          >
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
       </Box>
 
+      {/* Create Bug Modal */}
+      <CreateBugModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateBug}
+        teamId={teamId || 0}
+      />
+
+      {/* Table Section */}
       <TableContainer
         component={Paper}
         sx={{
@@ -208,7 +253,7 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredBugs.length === 0 ? (
+            {teamBugs.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={9}
@@ -233,7 +278,7 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredBugs
+              teamBugs
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((bug) => (
                   <TableRow
@@ -251,10 +296,22 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
                   >
                     <TableCell sx={{ color: "#fff" }}>#{bug.id}</TableCell>
                     <TableCell sx={{ color: "#fff" }}>
-                      <Tooltip title={bug.reporter.email}>
-                        <span>{bug.reporter.email.split("@")[0]}</span>
-                      </Tooltip>
+                      {bug.reporter ? (
+                        <Tooltip title={bug.reporter.email}>
+                          <span>{bug.reporter.email.split("@")[0]}</span>
+                        </Tooltip>
+                      ) : (
+                        <Chip
+                          label="Unknown Reporter"
+                          size="small"
+                          sx={{
+                            backgroundColor: "rgba(255, 255, 255, 0.1)",
+                            color: "#fff",
+                          }}
+                        />
+                      )}
                     </TableCell>
+
                     <TableCell sx={{ color: "#fff" }}>
                       {bug.assignee ? (
                         <Tooltip title={bug.assignee.email}>
@@ -334,7 +391,7 @@ const TestersBugTable: React.FC<TestersBugTableProps> = ({ teamId }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={filteredBugs.length}
+        count={teamBugs.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -73,10 +73,16 @@ export const createBug = createAsyncThunk(
         },
         body: JSON.stringify(newBug),
       });
-      if (!response.ok) throw new Error("Failed to create bug");
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || "Failed to create bug");
+      }
       return (await response.json()) as Bug;
-    } catch (error) {
-      return rejectWithValue("Failed to create bug");
+    } catch (error: any) {
+      return rejectWithValue(
+        error.message || "An error occurred while creating the bug"
+      );
     }
   }
 );
@@ -128,6 +134,7 @@ const bugSlice = createSlice({
       })
       .addCase(fetchBugs.fulfilled, (state, action) => {
         const teamId = action.meta.arg;
+        console.log(action.payload);
         state.bugsByTeam[teamId] = action.payload;
         state.loading[teamId] = false;
         state.error[teamId] = null;
@@ -137,22 +144,26 @@ const bugSlice = createSlice({
         state.loading[teamId] = false;
         state.error[teamId] = action.payload as string;
       })
-      .addCase(createBug.pending, (state) => {
-        state.loading[-1] = true;
-        state.error[-1] = null;
+      .addCase(createBug.pending, (state, action) => {
+        const teamId = action.meta.arg.team_id;
+        state.loading[teamId] = true;
+        state.error[teamId] = null;
       })
-      .addCase(createBug.fulfilled, (state, action: PayloadAction<Bug>) => {
-        const teamId = action.payload.team_id;
-        if (!state.bugsByTeam[teamId]) {
-          state.bugsByTeam[teamId] = [];
+      .addCase(createBug.fulfilled, (state, action) => {
+        const { team_id } = action.payload;
+
+        state.loading[team_id] = false;
+        state.error[team_id] = null;
+
+        if (!state.bugsByTeam[team_id]) {
+          state.bugsByTeam[team_id] = [];
         }
-        state.bugsByTeam[teamId].push(action.payload);
-        state.loading[-1] = false;
-        state.error[-1] = null;
+        state.bugsByTeam[team_id].push(action.payload);
       })
       .addCase(createBug.rejected, (state, action) => {
-        state.loading[-1] = false;
-        state.error[-1] = action.payload as string;
+        const teamId = action.meta.arg.team_id;
+        state.loading[teamId] = false;
+        state.error[teamId] = action.payload as string;
       })
       .addCase(updateBug.pending, (state) => {
         state.loading[-1] = true;
