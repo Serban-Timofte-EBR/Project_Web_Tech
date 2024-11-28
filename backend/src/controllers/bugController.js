@@ -77,6 +77,17 @@ const bugController = {
         return res.status(400).json({ error: "Bug is already assigned" });
       }
 
+      const existingInProgressBug = await Bug.findOne({
+        where: {
+          assignee_id: req.user.id,
+          status: config.bugStatus.IN_PROGRESS,
+        }
+      })
+
+      if (existingInProgressBug) {
+        return res.status(400).json({ error: "You already have a bug in progress" });
+      }
+
       // Update bug
       bug.assignee_id = req.user.id;
       bug.status = config.bugStatus.IN_PROGRESS;

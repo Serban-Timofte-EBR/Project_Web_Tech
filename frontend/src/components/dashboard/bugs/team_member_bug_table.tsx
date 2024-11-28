@@ -15,6 +15,8 @@ import {
   Typography,
   Button,
   TablePagination,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 interface BugTableProps {
@@ -48,12 +50,28 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [assignErr, setAssignErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (assignErr) {
+      setOpenSnackbar(true);
+    } else {
+      setOpenSnackbar(false);
+    }
+  }, [assignErr]);
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
+    setAssignErr(null);
+  };
+
   const handleAssignBug = async (bugId: number) => {
     try {
       await dispatch(assignBug({ bugId })).unwrap();
       dispatch(fetchBugs(teamId));
     } catch (error) {
-      console.error("Failed to assign bug:", error);
+      setAssignErr("Failed to assign bug. You already have a bug IN PROGRESS.");
     }
   };
 
@@ -132,151 +150,229 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
     );
   }
 
+  const handleResolveBug = (id: number) => {
+    console.log("Resolving bug with ID:", id);
+  }
+
   return (
-    <TableContainer
-      component={Paper}
-      sx={{
-        mt: 3,
-        borderRadius: 2,
-        backgroundColor: "#1c1c1e", // Dark background
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
-      }}
-    >
-      <Table>
-        <TableHead>
-          <TableRow>
-            {[
-              "ID",
-              "Severity",
-              "Description",
-              "Status",
-              "Reporter",
-              "Assignee",
-              "Commit Link",
-              "Fix Link",
-              "Actions",
-            ].map((header) => (
-              <TableCell
-                key={header}
-                sx={{
-                  fontWeight: "bold",
-                  backgroundColor: "#2c2c2e",
-                  color: "#ffffff",
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-              >
-                {header}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {teamBugs
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((bug, index) => (
-              <TableRow
-                key={bug.id}
-                sx={{
-                  backgroundColor: index % 2 === 0 ? "#2c2c2e" : "#3a3a3c",
-                  "&:hover": {
-                    backgroundColor: "#444446",
-                  },
-                }}
-              >
-                <TableCell sx={{ color: "#ffffff" }}>{bug.id}</TableCell>
-                <TableCell sx={{ color: "#ffffff" }}>
-                  {renderSeverityChip(bug.severity)}
-                </TableCell>
-                <TableCell sx={{ color: "#ffffff" }}>
-                  {bug.description}
-                </TableCell>
-                <TableCell sx={{ color: "#ffffff" }}>
-                  {renderStatusChip(bug.status)}
-                </TableCell>
-                <TableCell sx={{ color: "#ffffff" }}>
-                  {bug.reporter?.email || "Unknown"}
-                </TableCell>
-                <TableCell sx={{ color: "#ffffff" }}>
-                  {bug.assignee?.email || "Unassigned"}
-                </TableCell>
-                <TableCell sx={{ color: "#1e88e5" }}>
-                  <a
-                    href={bug.commit_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View Commit
-                  </a>
-                </TableCell>
+    <>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          sx={{
+            width: "100%",
+            backgroundColor: "#f44336",
+            color: "#ffffff",
+            fontWeight: "bold",
+          }}
+        >
+          {assignErr}
+        </Alert>
+      </Snackbar>
+      <TableContainer
+        component={Paper}
+        sx={{
+          mt: 3,
+          borderRadius: 2,
+          backgroundColor: "#1c1c1e",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+        }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              {[
+                "ID",
+                "Severity",
+                "Description",
+                "Status",
+                "Reporter",
+                "Assignee",
+                "Commit Link",
+                "Fix Link",
+                "Actions",
+              ].map((header) => (
                 <TableCell
-                  sx={{ color: bug.fix_commit_link ? "#43a047" : "#ffffff" }}
+                  key={header}
+                  sx={{
+                    fontWeight: "bold",
+                    backgroundColor: "#2c2c2e",
+                    color: "#ffffff",
+                    padding: "10px",
+                    textAlign: "center",
+                  }}
                 >
-                  {bug.fix_commit_link ? (
+                  {header}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {teamBugs
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((bug, index) => (
+                <TableRow
+                  key={bug.id}
+                  sx={{
+                    backgroundColor: index % 2 === 0 ? "#2c2c2e" : "#3a3a3c",
+                    "&:hover": {
+                      backgroundColor: "#444446",
+                    },
+                  }}
+                >
+                  <TableCell sx={{ color: "#ffffff" }}>{bug.id}</TableCell>
+                  <TableCell sx={{ color: "#ffffff" }}>
+                    {renderSeverityChip(bug.severity)}
+                  </TableCell>
+                  <TableCell sx={{ color: "#ffffff" }}>
+                    {bug.description}
+                  </TableCell>
+                  <TableCell sx={{ color: "#ffffff" }}>
+                    {renderStatusChip(bug.status)}
+                  </TableCell>
+                  <TableCell sx={{ color: "#ffffff" }}>
+                    {bug.reporter?.email || "Unknown"}
+                  </TableCell>
+                  <TableCell sx={{ color: "#ffffff" }}>
+                    {bug.assignee?.email || "Unassigned"}
+                  </TableCell>
+                  <TableCell sx={{ color: "#1e88e5" }}>
                     <a
-                      href={bug.fix_commit_link}
+                      href={bug.commit_link}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      View Fix
+                      View Commit
                     </a>
-                  ) : (
-                    "N/A"
-                  )}
-                </TableCell>
-                <TableCell>
-                  {bug.assignee_id === null ? (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      size="small"
-                      onClick={() => handleAssignBug(bug.id)}
-                    >
-                      Assign Me
-                    </Button>
-                  ) : (
-                    <Chip
-                      label="Assigned"
-                      sx={{
-                        backgroundColor: "#4caf5020",
-                        color: "#4caf50",
-                      }}
-                    />
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={teamBugs.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        sx={{
-          backgroundColor: "#2c2c2e",
-          color: "#ffffff",
-          ".MuiTablePagination-toolbar": {
-            flexDirection: "row",
-          },
-          ".MuiTablePagination-select": {
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: bug.fix_commit_link ? "#43a047" : "#ffffff" }}
+                  >
+                    {bug.fix_commit_link ? (
+                      <a
+                        href={bug.fix_commit_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Fix
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {bug.assignee_id === null ? (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => handleAssignBug(bug.id)}
+                        sx={{
+                          width: "100%",
+                          backgroundColor: "#1e88e5",
+                          color: "#ffffff",
+                          fontWeight: "bold",
+                          padding: "8px 16px",
+                          "&:hover": {
+                            backgroundColor: "#1565c0",
+                          },
+                        }}
+                      >
+                        Assign Me
+                      </Button>
+                    ) : (
+                      <>
+                        <Chip
+                          label="Assigned"
+                          sx={{
+                            backgroundColor: "#4caf5020",
+                            color: "#4caf50",
+                            fontWeight: "bold",
+                            display: "block",
+                            width: "100%",
+                            textAlign: "center",
+                            marginBottom: "8px",
+                            fontSize: "0.875rem",
+                          }}
+                        />
+                        {bug.status === "in_progress" ? (
+                          <Chip
+                            label="Resolve"
+                            onClick={() => handleResolveBug(bug.id)}
+                            clickable
+                            sx={{
+                              backgroundColor: "#FFB74D20",
+                              color: "#FFA726",
+                              fontWeight: "bold",
+                              width: "100%",
+                              textAlign: "center",
+                              padding: "8px 16px",
+                              fontSize: "0.875rem",
+                              borderRadius: "16px",
+                              "&:hover": {
+                                backgroundColor: "#FFA726",
+                                color: "#ffffff",
+                                cursor: "pointer",
+                              },
+                            }}
+                          />
+                        ) : (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "#ffffff",
+                              display: "block",
+                              textAlign: "center",
+                              mt: 1,
+                              fontSize: "0.875rem",
+                            }}
+                          >
+                            Can only resolve when in progress
+                          </Typography>
+                        )}
+                      </>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={teamBugs.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{
+            backgroundColor: "#2c2c2e",
             color: "#ffffff",
-          },
-          ".MuiTablePagination-selectIcon": {
-            color: "#ffffff",
-          },
-          ".MuiTablePagination-displayedRows": {
-            color: "#ffffff",
-          },
-          ".MuiTablePagination-actions button": {
-            color: "#ffffff",
-          },
-        }}
-      />
-    </TableContainer>
+            ".MuiTablePagination-toolbar": {
+              flexDirection: "row",
+            },
+            ".MuiTablePagination-select": {
+              color: "#ffffff",
+            },
+            ".MuiTablePagination-selectIcon": {
+              color: "#ffffff",
+            },
+            ".MuiTablePagination-displayedRows": {
+              color: "#ffffff",
+            },
+            ".MuiTablePagination-actions button": {
+              color: "#ffffff",
+            },
+          }}
+        />
+      </TableContainer>
+    </>
   );
 };
 

@@ -64,20 +64,21 @@ const TeamMemberPage: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        height: "100vh",
         background: "linear-gradient(135deg, #1e293b 0%, #3b4757 100%)",
         color: "white",
-        py: 6,
-        px: { xs: 3, md: 6 },
+        overflow: "auto",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      {/* Hero Section */}
       <Paper
         elevation={4}
         sx={{
-          p: { xs: 4, md: 6 },
-          mb: 6,
-          mt: 6,
+          p: { xs: 3, sm: 4, md: 5 },
+          mb: 4,
+          mt: 4,
+          flexShrink: 0,
           borderRadius: 5,
           background: "rgba(0, 0, 0, 0.7)",
           backdropFilter: "blur(10px)",
@@ -86,28 +87,29 @@ const TeamMemberPage: React.FC = () => {
       >
         <Grid container spacing={4} alignItems="center">
           {/* Team Icon */}
-          <Grid item xs={12} md={2}>
+          <Grid item xs={12} sm={3} md={2}>
             <Avatar
               sx={{
                 bgcolor: "#4CAF50",
-                width: 96,
-                height: 96,
-                fontSize: "2.5rem",
+                width: { xs: 72, sm: 96 },
+                height: { xs: 72, sm: 96 },
+                fontSize: { xs: "2rem", sm: "2.5rem" },
                 fontWeight: "bold",
+                margin: "auto",
               }}
             >
               {user_team.name[0]}
             </Avatar>
           </Grid>
           {/* Team Info */}
-          <Grid item xs={12} md={10}>
+          <Grid item xs={12} sm={9} md={10}>
             <Typography
               variant="h3"
               sx={{
                 fontWeight: "bold",
                 color: "#f0f0f0",
                 mb: 1,
-                textAlign: { xs: "center", md: "left" },
+                textAlign: { xs: "center", sm: "left" },
               }}
             >
               {user_team.name}
@@ -115,10 +117,10 @@ const TeamMemberPage: React.FC = () => {
             <Typography
               variant="body1"
               sx={{
-                fontSize: "1.2rem",
+                fontSize: { xs: "1rem", sm: "1.2rem" },
                 color: "rgba(255, 255, 255, 0.8)",
                 mb: 2,
-                textAlign: { xs: "center", md: "left" },
+                textAlign: { xs: "center", sm: "left" },
               }}
             >
               {user_team.description}
@@ -131,8 +133,8 @@ const TeamMemberPage: React.FC = () => {
                 alignItems: "center",
                 gap: 1,
                 color: "#e0e0e0",
-                textAlign: { xs: "center", md: "left" },
-                justifyContent: { xs: "center", md: "flex-start" },
+                textAlign: { xs: "center", sm: "left" },
+                justifyContent: { xs: "center", sm: "flex-start" },
               }}
             >
               <GroupsIcon fontSize="small" />
@@ -148,7 +150,7 @@ const TeamMemberPage: React.FC = () => {
       <Paper
         elevation={3}
         sx={{
-          p: { xs: 4, md: 6 },
+          p: { xs: 3, sm: 4, md: 5 },
           mb: 6,
           borderRadius: 5,
           background: "rgba(0, 0, 0, 0.7)",
@@ -184,8 +186,8 @@ const TeamMemberPage: React.FC = () => {
                   sx={{
                     bgcolor: "#00BCD4",
                     mb: 2,
-                    width: 64,
-                    height: 64,
+                    width: 56,
+                    height: 56,
                   }}
                 >
                   {user.email[0].toUpperCase()}
@@ -220,27 +222,18 @@ const TeamMemberPage: React.FC = () => {
       <Paper
         elevation={3}
         sx={{
-          p: { xs: 4, md: 6 },
+          p: { xs: 3, sm: 4, md: 5 },
           borderRadius: 5,
           background: "rgba(0, 0, 0, 0.8)",
           backdropFilter: "blur(10px)",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            mb: 3,
-          }}
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: "bold", color: "#00bcd4", mb: 3 }}
         >
-          <Typography
-            variant="h4"
-            sx={{ fontWeight: "bold", color: "#00bcd4" }}
-          >
-            Bugs
-          </Typography>
-        </Box>
+          Bugs
+        </Typography>
         <TeamMemberBugTable teamId={teamID!} />
       </Paper>
     </Box>
