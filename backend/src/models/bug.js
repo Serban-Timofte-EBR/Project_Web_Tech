@@ -57,6 +57,7 @@ const Bug = sequelize.define(
       type: DataTypes.ENUM,
       values: Object.values(config.bugStatus),
       defaultValue: config.bugStatus.OPEN,
+      defaultValue: config.bugStatus.OPEN,
     },
     fix_commit_link: {
       type: DataTypes.STRING,

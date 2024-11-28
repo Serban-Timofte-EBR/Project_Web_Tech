@@ -121,6 +121,33 @@ export const updateBug = createAsyncThunk(
   }
 );
 
+export const assignBug = createAsyncThunk(
+  "bugs/assignBug",
+  async ({ bugId }: { bugId: number }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/bugs/${bugId}/assign`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errData = await response.json();
+        return rejectWithValue(errData.message || "Failed to assign bug");
+      }
+
+      return (await response.json()) as Bug;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to assign bug");
+    }
+  }
+);
+
 const bugSlice = createSlice({
   name: "bugs",
   initialState,
@@ -186,6 +213,27 @@ const bugSlice = createSlice({
       .addCase(updateBug.rejected, (state, action) => {
         state.loading[-1] = false;
         state.error[-1] = action.payload as string;
+      })
+      .addCase(assignBug.pending, (state, action) => {
+        const { bugId } = action.meta.arg;
+        state.loading[bugId] = true;
+        state.error[bugId] = null;
+      })
+      .addCase(assignBug.fulfilled, (state, action) => {
+        const updatedBug = action.payload;
+        const teamBugs = state.bugsByTeam[updatedBug.team_id];
+        if (teamBugs) {
+          const index = teamBugs.findIndex((bug) => bug.id === updatedBug.id);
+          if (index !== -1) {
+            teamBugs[index] = updatedBug;
+          }
+        }
+        state.loading[updatedBug.id] = false;
+      })
+      .addCase(assignBug.rejected, (state, action) => {
+        const { bugId } = action.meta.arg;
+        state.loading[bugId] = false;
+        state.error[bugId] = action.payload as string;
       });
   },
 });
