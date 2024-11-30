@@ -339,18 +339,19 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
                             }}
                           />
                         ) : (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "#ffffff",
-                              display: "block",
-                              textAlign: "center",
-                              mt: 1,
-                              fontSize: "0.875rem",
-                            }}
-                          >
-                            Can only resolve when in progress
-                          </Typography>
+                          // <Typography
+                          //   variant="caption"
+                          //   sx={{
+                          //     color: "#ffffff",
+                          //     display: "block",
+                          //     textAlign: "center",
+                          //     mt: 1,
+                          //     fontSize: "0.875rem",
+                          //   }}
+                          // >
+                          //   Can only resolve when in progress
+                          // </Typography>
+                          null
                         )}
                       </>
                     )}
