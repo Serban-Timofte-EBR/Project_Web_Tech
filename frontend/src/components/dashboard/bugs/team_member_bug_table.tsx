@@ -18,6 +18,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import LaunchIcon from "@mui/icons-material/Launch";
 
 interface BugTableProps {
   teamId: number;
@@ -152,7 +153,7 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
 
   const handleResolveBug = (id: number) => {
     console.log("Resolving bug with ID:", id);
-  }
+  };
 
   return (
     <>
@@ -242,13 +243,28 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
                   <TableCell sx={{ color: "#ffffff" }}>
                     {bug.assignee?.email || "Unassigned"}
                   </TableCell>
-                  <TableCell sx={{ color: "#1e88e5" }}>
+                  <TableCell sx={{ textAlign: "center" }}>
                     <a
                       href={bug.commit_link}
                       target="_blank"
                       rel="noopener noreferrer"
+                      style={{
+                        textDecoration: "none",
+                        color: "#1e88e5",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
                     >
-                      View Commit
+                      <LaunchIcon
+                        sx={{
+                          fontSize: "1.5rem",
+                          color: "#1e88e5",
+                          "&:hover": {
+                            color: "#1565c0",
+                          },
+                        }}
+                      />
                     </a>
                   </TableCell>
                   <TableCell

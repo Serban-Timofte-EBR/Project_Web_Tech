@@ -26,7 +26,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [teamId, setTeamId] = useState<number | null>(null);
-  const [backgroundImg, setBackgroundImg] = useState("");
   const [role, setRole] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -64,30 +63,30 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
 
   return (
     <Box
-      style={{
-        backgroundImage: `url(${backgroundImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+      sx={{
         height: "100vh",
-        width: "100vw",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        background: "linear-gradient(135deg, #1e293b 0%, #3b4757 100%)",
       }}
     >
       <Box
         sx={{
-          backgroundColor: "rgba(255, 255, 255, 0.15)",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
           backdropFilter: "blur(10px)",
-          borderRadius: 2,
-          boxShadow: 3,
+          borderRadius: 4,
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.5)",
+          padding: { xs: 3, sm: 5 },
           width: "90%",
-          maxWidth: 400,
+          maxWidth: 420,
           textAlign: "center",
-          padding: 3,
         }}
       >
-        <Typography variant="h5" sx={{ mb: 2, color: "#fff" }}>
+        <Typography
+          variant="h4"
+          sx={{ mb: 3, fontWeight: "bold", color: "#90caf9" }}
+        >
           Register
         </Typography>
         <form onSubmit={handleSubmit}>
@@ -99,10 +98,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            InputLabelProps={{
+              style: { color: "#fff" },
+            }}
             sx={{
-              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
               borderRadius: 1,
-              input: { color: "#000" },
+              input: { color: "#fff" },
+              mb: 2,
             }}
           />
           <TextField
@@ -115,13 +118,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             InputLabelProps={{
-              style: { color: "#000" },
+              style: { color: "#fff" },
             }}
             sx={{
-              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
               borderRadius: 1,
-              input: { color: "#000" },
-              marginBottom: 4,
+              input: { color: "#fff" },
+              mb: 2,
             }}
           />
           <TextField
@@ -131,11 +134,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
             value={role}
             onChange={(e) => setRole(e.target.value)}
             helperText="Please select your role"
+            InputLabelProps={{
+              style: { color: "white" },
+            }}
             sx={{
-              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
               borderRadius: 1,
-              input: { color: "#0000" },
-              marginBottom: 4,
+              input: { color: "white" },
+              mb: 3,
             }}
           >
             <MenuItem value="Tester">Tester</MenuItem>
@@ -149,10 +155,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
               value={teamId || ""}
               onChange={(e) => setTeamId(Number(e.target.value))}
               helperText="Please select your team"
+              InputLabelProps={{
+                style: { color: "#fff" },
+              }}
               sx={{
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
                 borderRadius: 1,
                 input: { color: "#fff" },
+                mb: 3,
               }}
             >
               {teamsLoading ? (
@@ -174,16 +184,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, authError }) => {
             fullWidth
             sx={{
               mt: 2,
-              backgroundColor: "#6a82fb",
-              "&:hover": { backgroundColor: "#5a72eb" },
+              backgroundColor: "#1565c0",
+              color: "#fff",
+              fontWeight: "bold",
+              "&:hover": { backgroundColor: "#0d47a1" },
             }}
           >
             Register
           </Button>
         </form>
-        <Typography sx={{ mt: 2, color: "#fff" }}>
+        <Typography sx={{ mt: 2, color: "#90caf9" }}>
           Already have an account?{" "}
-          <a href="/login" style={{ color: "#bbdefb" }}>
+          <a href="/login" style={{ color: "#bbdefb", textDecoration: "none" }}>
             Login here
           </a>
         </Typography>
