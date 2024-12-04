@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -11,19 +11,35 @@ import {
   Grid,
   Avatar,
 } from "@mui/material";
-import { Team } from "../redux/teams/teamsSlice";
+import {fetchTeamById, Team} from "../redux/teams/teamsSlice";
 import { GitHub, ArrowBack } from "@mui/icons-material";
 import TestersBugTable from "../components/dashboard/bugs/testers_bug_table";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
 
 const TeamPage: React.FC = () => {
-  const { teamId } = useParams<{ teamId: string }>();
   const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch();
 
-  const team = useSelector((state: RootState) =>
-    state.teams.teams.find((t) => t.id === Number(teamId))
-  );
+    const { teamId } = useParams<{ teamId: string }>();
+    const [team, setTeam] = useState<Team | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadTeam = async () => {
+            try {
+                const fetchedTeam = await dispatch(fetchTeamById(Number(teamId))).unwrap();
+                setTeam(fetchedTeam);
+            } catch (error) {
+                setError("Failed to load team");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadTeam();
+    }, [dispatch, teamId]);
 
   const handleBack = () => {
     navigate(-1);
