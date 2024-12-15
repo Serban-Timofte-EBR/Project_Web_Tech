@@ -67,7 +67,7 @@ const syncDatabase = async () => {
 
     // Sync all models
     await sequelize.sync({
-      force: process.env.DB_FORCE_SYNC === "true",
+      force: process.env.DB_FORCE_SYNC === "false",
       alter: process.env.NODE_ENV === "development",
     });
     console.log("📊 Database synchronized successfully.");

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store";
-import { fetchBugs, assignBug } from "../../../redux/bugs/bugsSlice";
+import { fetchBugs, assignBug, updateBug } from "../../../redux/bugs/bugsSlice";
+import CloseBugModal from "./close_bug_modal";
 import {
   Box,
   Table,
@@ -54,6 +55,10 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [assignErr, setAssignErr] = useState<string | null>(null);
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [selectedBugForResolution, setSelectedBugForResolution] = useState<number | null>(null);
+
   useEffect(() => {
     if (assignErr) {
       setOpenSnackbar(true);
@@ -76,9 +81,37 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
     }
   };
 
+  const handleResolveBug = (bugId: number) => {
+    setSelectedBugForResolution(bugId);
+  };
+
   useEffect(() => {
     dispatch(fetchBugs(teamId));
   }, [dispatch, teamId]);
+
+  const handleBugResolutionSubmit = async (data: { resolution_link: string }) => {
+    try {
+      if (selectedBugForResolution) {
+        await dispatch(updateBug({ 
+          bugId: selectedBugForResolution, 
+          status: 'resolved', 
+          fix_commit_link: data.resolution_link
+        })).unwrap();
+        
+        dispatch(fetchBugs(teamId));
+        
+        setSelectedBugForResolution(null);
+      }
+    } catch (error) {
+      // Handle any errors during bug resolution
+      setErrorMessage("Failed to resolve bug. Please try again.");
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleCloseResolutionModal = () => {
+    setSelectedBugForResolution(null);
+  };
 
   const renderSeverityChip = (severity: string) => {
     const config = SEVERITY_CONFIG[severity as keyof typeof SEVERITY_CONFIG];
@@ -151,10 +184,6 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
     );
   }
 
-  const handleResolveBug = (id: number) => {
-    console.log("Resolving bug with ID:", id);
-  };
-
   return (
     <>
       <Snackbar
@@ -163,6 +192,7 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
+
         <Alert
           onClose={handleSnackbarClose}
           severity="error"
@@ -176,6 +206,13 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
           {assignErr}
         </Alert>
       </Snackbar>
+
+      //Adaugat de mine
+      <CloseBugModal
+        open={selectedBugForResolution !== null}
+        onClose={handleCloseResolutionModal}
+        onSubmit={handleBugResolutionSubmit}
+      />
       <TableContainer
         component={Paper}
         sx={{
@@ -317,7 +354,8 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
                             fontSize: "0.875rem",
                           }}
                         />
-                        {bug.status === "in_progress" ? (
+
+                        {bug.status === "in_progress" && (
                           <Chip
                             label="Resolve"
                             onClick={() => handleResolveBug(bug.id)}
@@ -338,20 +376,20 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
                               },
                             }}
                           />
-                        ) : (
-                          // <Typography
-                          //   variant="caption"
-                          //   sx={{
-                          //     color: "#ffffff",
-                          //     display: "block",
-                          //     textAlign: "center",
-                          //     mt: 1,
-                          //     fontSize: "0.875rem",
-                          //   }}
-                          // >
-                          //   Can only resolve when in progress
-                          // </Typography>
-                          null
+                        // ) : (
+                        //   // <Typography
+                        //   //   variant="caption"
+                        //   //   sx={{
+                        //   //     color: "#ffffff",
+                        //   //     display: "block",
+                        //   //     textAlign: "center",
+                        //   //     mt: 1,
+                        //   //     fontSize: "0.875rem",
+                        //   //   }}
+                        //   // >
+                        //   //   Can only resolve when in progress
+                        //   // </Typography>
+                        //   null
                         )}
                       </>
                     )}
