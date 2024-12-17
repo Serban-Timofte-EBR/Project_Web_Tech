@@ -207,7 +207,6 @@ const TeamMemberBugTable: React.FC<BugTableProps> = ({ teamId }) => {
         </Alert>
       </Snackbar>
 
-      //Adaugat de mine
       <CloseBugModal
         open={selectedBugForResolution !== null}
         onClose={handleCloseResolutionModal}
